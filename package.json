@@ -1,0 +1,20 @@
+{
+	"name": "note-app",
+	"version": "1.0.1",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [
+		"node",
+		"javascript"
+	],
+	"author": "Nikita Danilov <nekit9401@yandex.ru>",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"@types/yargs": "^17.0.33",
+		"chalk": "^4.1.2",
+		"yargs": "^17.2.1"
+	}
+}
