@@ -1,14 +1,9 @@
 const chalk = require('chalk');
 const Note = require('./models/Note');
 
-async function addNote(title) {
-	await Note.create({ title });
+async function addNote(title, owner) {
+	await Note.create({ title, owner });
 	console.log(chalk.bgGreen('Note was added!'));
-}
-
-async function deleteNote(id) {
-	await Note.deleteOne({ _id: id });
-	console.log(chalk.bgRed(`Note with id:${id} was deleted!`));
 }
 
 async function getNotes() {
@@ -17,8 +12,23 @@ async function getNotes() {
 	return notes;
 }
 
-async function updateNote(id, newTitle) {
-	await Note.updateOne({ _id: id }, { title: newTitle });
+async function deleteNote(id, owner) {
+	const result = await Note.deleteOne({ _id: id, owner });
+
+	if (result.matchedCount === 0) {
+		throw new Error('Нет заметок для удаления');
+	}
+
+	console.log(chalk.bgRed(`Note with id:${id} was deleted!`));
+}
+
+async function updateNote(id, newTitle, owner) {
+	const result = await Note.updateOne({ _id: id, owner }, { title: newTitle });
+
+	if (result.matchedCount === 0) {
+		throw new Error('Нет заметок для редактирования');
+	}
+
 	console.log(chalk.bgYellow(`Note with id:${id} was been updated!`));
 }
 
