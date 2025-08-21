@@ -3,8 +3,8 @@ const chalk = require('chalk');
 const path = require('path');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
-const { addNote, getNotes, deleteNote, updateNote } = require('./notes-controller');
-const { addUser, loginUser } = require('./user-controller');
+const { addComplaint, getComplaints } = require('./complaints-controller');
+const { loginUser } = require('./user-controller');
 const auth = require('./middlewares/auth');
 
 const port = 3000;
@@ -26,7 +26,7 @@ app.use(
 
 app.get('/login', async (req, res) => {
 	res.render('login', {
-		title: 'Express App',
+		title: 'Жалобы Онлайн',
 		error: undefined,
 	});
 });
@@ -40,34 +40,39 @@ app.post('/login', async (req, res) => {
 		res.redirect('/');
 	} catch (error) {
 		res.render('login', {
-			title: 'Express App',
+			title: 'Жалобы Онлайн',
 			error: error.message,
 		});
 	}
 });
 
-app.get('/register', async (req, res) => {
-	res.render('register', {
-		title: 'Express App',
+app.get('/form', async (req, res) => {
+	res.render('form', {
+		title: 'Жалобы Онлайн',
 		error: undefined,
+		created: false,
 	});
 });
 
-app.post('/register', async (req, res) => {
+app.post('/form', async (req, res) => {
 	try {
-		await addUser(req.body.email, req.body.password);
+		res.render('form', {
+			title: 'Жалобы Онлайн',
+			created: true,
+			error: undefined,
+			isButtonDisabled: true,
+		});
 
-		res.redirect('/login');
+		await addComplaint(req.body.fullName, req.body.phone, req.body.problem);
+
+		res.render('form', {
+			title: 'Жалобы Онлайн',
+			created: true,
+			error: undefined,
+		});
 	} catch (error) {
-		if (error.code === 11000) {
-			res.render('register', {
-				title: 'Express App',
-				error: 'Такой Email уже зарегистрирован',
-			});
-			return;
-		}
-		res.render('register', {
-			title: 'Express App',
+		res.render('form', {
+			title: 'Жалобы Онлайн',
 			error: error.message,
 		});
 	}
@@ -83,84 +88,17 @@ app.use(auth);
 
 app.get('/', async (req, res) => {
 	res.render('index', {
-		title: 'Express App',
-		notes: await getNotes(),
+		title: 'Список заявок',
+		complaints: await getComplaints(),
 		userEmail: req.user.email,
 		created: false,
 		error: false,
 	});
 });
 
-app.post('/', async (req, res) => {
-	try {
-		console.log(req.body, req.user.email);
-		await addNote(req.body.title, req.user.email);
-		res.render('index', {
-			title: 'Express App',
-			notes: await getNotes(),
-			userEmail: req.user.email,
-			created: true,
-			error: false,
-		});
-	} catch (error) {
-		console.error('Creation error', error);
-		res.render('index', {
-			title: 'Express App',
-			notes: await getNotes(),
-			userEmail: req.user.email,
-			created: false,
-			error: true,
-		});
-	}
-});
-
-app.delete('/:id', async (req, res) => {
-	try {
-		await deleteNote(req.params.id, req.user.email);
-
-		res.render('index', {
-			title: 'Express App',
-			notes: await getNotes(),
-			userEmail: req.user.email,
-			created: false,
-			error: false,
-		});
-	} catch (error) {
-		res.render('index', {
-			title: 'Express App',
-			notes: await getNotes(),
-			userEmail: req.user.email,
-			created: false,
-			error: error.message,
-		});
-	}
-});
-
-app.put('/:id', async (req, res) => {
-	try {
-		await updateNote(req.params.id, req.body.title, req.user.email);
-
-		res.render('index', {
-			title: 'Express App',
-			notes: await getNotes(),
-			userEmail: req.user.email,
-			created: false,
-			error: false,
-		});
-	} catch (error) {
-		res.render('index', {
-			title: 'Express App',
-			notes: await getNotes(),
-			userEmail: req.user.email,
-			created: false,
-			error: error.message,
-		});
-	}
-});
-
 mongoose
 	.connect(
-		'mongodb+srv://Nekit9401:KCYfA1vriOJ98h4G@cluster0.6ikts9r.mongodb.net/notes?retryWrites=true&w=majority&appName=Cluster0'
+		'mongodb+srv://Nekit9401:KCYfA1vriOJ98h4G@cluster0.6ikts9r.mongodb.net/complaints?retryWrites=true&w=majority&appName=Cluster0'
 	)
 	.then(() => {
 		app.listen(port, () => {

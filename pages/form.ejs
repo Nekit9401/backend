@@ -17,36 +17,50 @@
 	</head>
 
 	<body>
-		<%- include('./partials/guest-header') %>
-
 		<section class="h-100">
 			<div class="container py-5 h-100">
 				<% if (error) {%>
 				<div class="alert alert-danger"><%= error %></div>
+				<% } %> <% if(created) { %>
+				<div class="alert alert-success">Заявка была отправлена!</div>
 				<% } %>
 				<div class="row d-flex justify-content-center align-items-center h-100">
 					<div class="col">
 						<div class="card card-registration my-4">
-							<form method="POST" action="/login" class="card-body p-md-5 text-black">
-								<h3 class="mb-5 text-uppercase">Авторизация</h3>
+							<form method="POST" class="card-body p-md-5 text-black" id="complaintForm">
+								<h3 class="mb-5 text-uppercase">Запись к врачу</h3>
 
 								<div class="form-outline mb-4">
-									<input type="email" name="email" id="email" class="form-control form-control-lg" />
-									<label class="form-label" for="email">Электронная почта</label>
+									<input
+										type="text"
+										name="fullName"
+										id="fullName"
+										class="form-control form-control-lg"
+										required
+									/>
+									<label class="form-label" for="fullName">ФИО</label>
 								</div>
 
 								<div class="form-outline mb-4">
 									<input
-										type="password"
-										name="password"
-										id="password"
+										type="tel"
+										name="phone"
+										id="phone"
 										class="form-control form-control-lg"
+										required
 									/>
-									<label class="form-label" for="password">Пароль</label>
+									<label class="form-label" for="phone">Номер телефона</label>
+								</div>
+
+								<div class="mb-3">
+									<textarea class="form-control" id="problem" name="problem" rows="3"></textarea>
+									<label class="form-label" for="problem">Опишите вашу проблему</label>
 								</div>
 
 								<div class="d-flex justify-content-end pt-3">
-									<button type="submit" class="btn btn-warning btn-lg ms-2">Войти</button>
+									<button type="submit" class="btn btn-warning btn-lg ms-2" id="submitBtn">
+										Отправить
+									</button>
 								</div>
 							</form>
 						</div>
@@ -54,5 +68,6 @@
 				</div>
 			</div>
 		</section>
+		<script src="/app.js"></script>
 	</body>
 </html>

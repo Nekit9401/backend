@@ -14,6 +14,7 @@ const UserSchema = mongoose.Schema({
 	password: {
 		type: String,
 		required: true,
+		minLength: [6, 'Пароль должен содержать минимум 6 символов'],
 	},
 });
 

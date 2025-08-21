@@ -1,33 +1,33 @@
-document.addEventListener('click', async (event) => {
-	if (event.target.dataset.type === 'remove') {
-		const id = event.target.dataset.id;
+const form = document.getElementById('complaintForm');
+const phoneInput = document.getElementById('phone');
+const submitBtn = document.getElementById('submitBtn');
 
-		await remove(id);
-		event.target.closest('li').remove();
-	}
-	if (event.target.dataset.type === 'update') {
-		const id = event.target.dataset.id;
-		const updatedTitle = prompt('Введите новое название!');
+phoneInput.addEventListener('input', (e) => {
+	let value = e.target.value.replace(/\D/g, '');
 
-		if (updatedTitle) {
-			await update({ id, title: updatedTitle });
-			event.target.closest('li').querySelector('span').textContent = updatedTitle;
-		}
+	if (value.startsWith('7') || value.startsWith('8')) {
+		value = value.substring(1);
 	}
+
+	let formattedValue = '+7 (';
+
+	if (value.length > 0) {
+		formattedValue += value.substring(0, 3);
+	}
+	if (value.length > 3) {
+		formattedValue += ') ' + value.substring(3, 6);
+	}
+	if (value.length > 6) {
+		formattedValue += '-' + value.substring(6, 8);
+	}
+	if (value.length > 8) {
+		formattedValue += '-' + value.substring(8, 10);
+	}
+
+	e.target.value = formattedValue;
 });
 
-async function remove(id) {
-	await fetch(`/${id}`, {
-		method: 'DELETE',
-	});
-}
-
-async function update(newNote) {
-	await fetch(`/${newNote.id}`, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(newNote),
-	});
-}
+form.addEventListener('submit', (e) => {
+	submitBtn.disabled = true;
+	submitBtn.textContent = 'Отправка...';
+});
